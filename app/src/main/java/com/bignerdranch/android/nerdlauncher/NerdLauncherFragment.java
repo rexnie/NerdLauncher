@@ -6,12 +6,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class NerdLauncherFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_nerd_launcher, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_nerd_launcher_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         setupAdapter();
         return v;
     }
@@ -59,18 +60,23 @@ public class NerdLauncherFragment extends Fragment {
     private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ResolveInfo mResolveInfo;
         private TextView mNameTextView;
+        private ImageView mIconImageView;
 
-        public ActivityHolder(View itemView) {
-            super(itemView);
-            mNameTextView = (TextView) itemView;
+        public ActivityHolder(LayoutInflater layoutInflater, ViewGroup parent) {
+            super(layoutInflater.inflate(R.layout.app_list_launcher, parent, false));
+
+            mNameTextView = (TextView) itemView.findViewById(R.id.app_label_text_view);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.app_icon_image_view);
+            itemView.setOnClickListener(this);
         }
 
         public void bindActivity(ResolveInfo resolveInfo) {
             mResolveInfo = resolveInfo;
             PackageManager pm = getActivity().getPackageManager();
             String appName = mResolveInfo.loadLabel(pm).toString();
+            mIconImageView.setImageDrawable(mResolveInfo.loadIcon(pm));
             mNameTextView.setText(appName);
-            mNameTextView.setOnClickListener(this);
+            //mNameTextView.setOnClickListener(this);
         }
 
         @Override
@@ -94,9 +100,7 @@ public class NerdLauncherFragment extends Fragment {
         @Override
         public ActivityHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.
-                    inflate(android.R.layout.simple_list_item_1, parent, false);
-            return new ActivityHolder(view);
+            return new ActivityHolder(layoutInflater, parent);
 
         }
 
