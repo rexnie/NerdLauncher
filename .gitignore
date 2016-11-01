@@ -10,3 +10,6 @@
 gradlew.bat
 
 .idea/misc.xml
+app/libs/
+app/src/main/res/drawable/
+projectFilesBackup/
